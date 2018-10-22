@@ -58,7 +58,7 @@ function DayPickerNavigation({
 }) {
   const isHorizontal = orientation === HORIZONTAL_ORIENTATION;
   const isVertical = orientation !== HORIZONTAL_ORIENTATION;
-  const isVerticalScrollable = orientation === VERTICAL_SCROLLABLE;
+  const isVerticalScrollable = false;
 
   let navPrevIcon = navPrev;
   let navNextIcon = navNext;

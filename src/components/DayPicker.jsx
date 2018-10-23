@@ -81,6 +81,7 @@ const propTypes = forbidExtraProps({
   onMonthChange: PropTypes.func,
   onYearChange: PropTypes.func,
   onMultiplyScrollableMonths: PropTypes.func, // VERTICAL_SCROLLABLE daypickers only
+  showPrevMonthButton: PropTypes.bool, // VERTICAL_SCROLLABLE daypickers only
 
   // month props
   renderMonthText: mutuallyExclusiveProps(PropTypes.func, 'renderMonthText', 'renderMonthElement'),
@@ -137,6 +138,7 @@ export const defaultProps = {
   onMonthChange() {},
   onYearChange() {},
   onMultiplyScrollableMonths() {},
+  showPrevMonthButton: false,
 
   // month props
   renderMonthText: null,
@@ -456,7 +458,7 @@ class DayPicker extends BaseClass {
 
   onPrevMonthTransition(nextFocusedDate) {
     const { daySize, isRTL, numberOfMonths } = this.props;
-    const { calendarMonthWidth, monthTitleHeight } = this.state;
+    const { calendarMonthWidth, monthTitleHeight, scrollableMonthMultiple } = this.state;
 
     let translationValue;
     if (this.isVertical()) {
@@ -479,6 +481,9 @@ class DayPicker extends BaseClass {
       translationValue,
       focusedDate: null,
       nextFocusedDate,
+      ...(this.isVerticalScrollable()
+        ? { scrollableMonthMultiple: scrollableMonthMultiple + 1 }
+        : {}),
     });
   }
 
@@ -673,6 +678,11 @@ class DayPicker extends BaseClass {
     return orientation === VERTICAL_ORIENTATION || orientation === VERTICAL_SCROLLABLE;
   }
 
+  isVerticalScrollable() {
+    const { orientation } = this.props;
+    return orientation === VERTICAL_SCROLLABLE;
+  }
+
   updateStateAfterMonthTransition() {
     const {
       onPrevMonthClick,
@@ -697,7 +707,8 @@ class DayPicker extends BaseClass {
     const newMonth = currentMonth.clone();
     const firstDayOfWeek = this.getFirstDayOfWeek();
     if (monthTransition === PREV_TRANSITION) {
-      newMonth.subtract(1, 'month');
+      const substractValue = this.isVerticalScrollable() ? numberOfMonths : 1;
+      newMonth.subtract(substractValue, 'month');
       if (onPrevMonthClick) onPrevMonthClick(newMonth);
       const newInvisibleMonth = newMonth.clone().subtract(1, 'month');
       const numberOfWeeks = getNumberOfCalendarMonthWeeks(newInvisibleMonth, firstDayOfWeek);
@@ -798,6 +809,7 @@ class DayPicker extends BaseClass {
       orientation,
       phrases,
       isRTL,
+      showPrevMonthButton,
     } = this.props;
 
     if (noNavButtons) {
@@ -817,6 +829,7 @@ class DayPicker extends BaseClass {
         orientation={orientation}
         phrases={phrases}
         isRTL={isRTL}
+        showPrevMonthButton={showPrevMonthButton}
       />
     );
   }

@@ -26,6 +26,7 @@ const propTypes = forbidExtraProps({
 
   onPrevMonthClick: PropTypes.func,
   onNextMonthClick: PropTypes.func,
+  showPrevMonthButton: PropTypes.bool,
 
   // internationalization
   phrases: PropTypes.shape(getPhrasePropTypes(DayPickerNavigationPhrases)),
@@ -51,6 +52,7 @@ function DayPickerNavigation({
   navNext,
   onPrevMonthClick,
   onNextMonthClick,
+  showPrevMonthButton,
   orientation,
   phrases,
   isRTL,
@@ -58,7 +60,7 @@ function DayPickerNavigation({
 }) {
   const isHorizontal = orientation === HORIZONTAL_ORIENTATION;
   const isVertical = orientation !== HORIZONTAL_ORIENTATION;
-  const isVerticalScrollable = false;
+  const isVerticalScrollable = orientation === VERTICAL_SCROLLABLE;
 
   let navPrevIcon = navPrev;
   let navNextIcon = navNext;
@@ -115,7 +117,7 @@ function DayPickerNavigation({
         ] : []),
       )}
     >
-      {!isVerticalScrollable && (
+      {(!isVerticalScrollable || showPrevMonthButton) && (
         <div
           role="button"
           tabIndex="0"
@@ -172,7 +174,7 @@ function DayPickerNavigation({
             ...(isDefaultNavNext ? [
               styles.DayPickerNavigation_button__verticalDefault,
               styles.DayPickerNavigation_nextButton__verticalDefault,
-              isVerticalScrollable
+              isVerticalScrollable && !showPrevMonthButton
                 && styles.DayPickerNavigation_nextButton__verticalScrollableDefault,
             ] : []),
           ] : []),
